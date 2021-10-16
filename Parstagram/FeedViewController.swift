@@ -29,13 +29,15 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getData() {
         let query = PFQuery(className:"Posts")
+        query.includeKeys(["author"])
+        query.order(byDescending: "createdAt")
         query.findObjectsInBackground { (objects: [PFObject]?, error: Error?) in
             if let error = error {
                 // Log details of the failure
                 print(error.localizedDescription)
             } else if let objects = objects {
                 self.posts = objects
-                print(objects)
+                //print(objects)
                 self.tableView.reloadData()
                 
             }
@@ -51,21 +53,38 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: "FeedTableViewCell", for: indexPath) as! FeedTableViewCell
         
         let post = posts[indexPath.row]
-        print(post["caption"])
+        //print(post["caption"])
         cell.captionLabel.text = post["caption"] as! String
         
         //User Image
-//        let author = post["author"] as! PFUser
-//        let imageFile = author["profileImage"] as! PFFileObject
-//        let imageUrl = imageFile.url! //String
-//        let profileUrl = URL(string: imageUrl) //Object
-//        cell.userProfile.af_setImage(for: .normal, url: profileUrl!)
+        let author = post["author"] as! PFUser
+        //print(author)
+        let imageFile = author["profileImage"] as! PFFileObject
+        let imageUrl = imageFile.url! //String
+        let profileUrl = URL(string: imageUrl) //Object
+        //cell.userProfile.af.setImage(for: .normal, url: profileUrl!)
         
         //Post Image
         let postImageFile = post["image"] as! PFFileObject
         let postUrl = postImageFile.url!
         let postImageUrl = URL(string: postUrl)
-        print(postUrl)
+        //print(postUrl)
+        cell.postImage.af.setImage(withURL: postImageUrl!)
+        
+        //af.setImage(for: .normal, url: postImageUrl!)
+        
+        //cell.userProfile.layer.cornerRadius = 50
+        cell.userProfile.af.setBackgroundImage(for: .normal, url: postImageUrl!)
+        cell.userProfile.clipsToBounds = true
+        cell.userProfile.layer.cornerRadius = 50
+        
+        //layer.cornerRadius = 50
+            
+            
+        //cell.userProfile.imageView!.frame.size.width / 2
+        
+        
+        
         return cell
     }
     

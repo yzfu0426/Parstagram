@@ -31,12 +31,14 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
         post["author"] = user
         post["caption"] = commentTextView.text
         post["image"] = imageFile
-        //user["numberOfPosts"] = user["numberOfPosts"] as! Int + 1
-        
         
         post.saveInBackground { (success, error) in
             if success {
-                self.dismiss(animated: true, completion: nil)
+                user["numberOfPosts"] = user["numberOfPosts"] as! Int + 1
+                let main = UIStoryboard(name: "Main", bundle: nil)
+                let mainTabBarController = main.instantiateViewController(identifier: "mainTabBarController")
+                self.view.window?.rootViewController = mainTabBarController
+                //dismiss(animated: true, completion: nil)
                 print("saved")
             } else {
                 print("error!")
@@ -64,7 +66,7 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
         let image = info[.editedImage] as! UIImage
         
         let size = CGSize(width: 300, height: 300)
-        let scaledImage = image.af_imageScaled(to: size)
+        let scaledImage = image.af.imageScaled(to: size)
         
         imageView.image = scaledImage
         
